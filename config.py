@@ -48,16 +48,12 @@ GOOGLE_ONE_URL        = "https://one.google.com/"
 GOOGLE_ONE_OFFERS_URL = "https://one.google.com/about/plans"
 
 # ── Gemini offer detection keywords ──────────────────────────────────────────
+# IMPORTANT: Do not use broad words such as "gemini pro", "activate" or
+# "get started" here. The Google AI landing page contains those words but is
+# NOT the Pixel offer URL. The offer page shown for eligible Pixel devices has
+# a real "Start trial" CTA whose href is the activation/offer URL.
 GEMINI_OFFER_KEYWORDS = [
-    "gemini pro",
-    "gemini advanced",
-    "12 month",
-    "12-month",
-    "free trial",
-    "activate",
-    "get started",
-    "claim offer",
-    "redeem",
+    "start trial",
 ]
 
 # ── Selenium / WebDriver ──────────────────────────────────────────────────────
