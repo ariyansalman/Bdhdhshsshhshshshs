@@ -5,7 +5,9 @@ Configuration and constants for the Pixel 10 Pro Google One Gemini Bot.
 import os
 
 # ── Telegram ──────────────────────────────────────────────────────────────────
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+# Support both names so existing deployments using BOT_TOKEN continue to work.
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN") or os.environ.get("BOT_TOKEN", "")
+BOT_TOKEN = TELEGRAM_BOT_TOKEN
 
 # ── Device specs – Google Pixel 10 Pro (Android 16) ──────────────────────────
 DEVICE_MODEL        = "Pixel 10 Pro"
@@ -13,28 +15,25 @@ DEVICE_BRAND        = "google"
 DEVICE_MANUFACTURER = "Google"
 ANDROID_VERSION     = "16"
 ANDROID_SDK         = "36"
-BUILD_ID            = "CP1A.260405.005"       # Pixel 10 Pro build fingerprint
+BUILD_ID            = "CP1A.260405.005"
 
 # Hardware profile (used for navigator injection)
-DEVICE_RAM_GB           = 16                  # 16 GB RAM (spoofed as 16 via JS)
-DEVICE_CPU_CORES        = 8                   # Tensor G5: 8 reported cores
-DEVICE_MAX_TOUCH        = 5                   # 5-point multitouch (realistic)
+DEVICE_RAM_GB           = 16
+DEVICE_CPU_CORES        = 8
+DEVICE_MAX_TOUCH        = 5
 DEVICE_GPU_VENDOR       = "Imagination Technologies"
-DEVICE_GPU_RENDERER     = "PowerVR DXT-48-1536"  # Tensor G5 GPU
+DEVICE_GPU_RENDERER     = "PowerVR DXT-48-1536"
 
-# Screen – Pixel 10 Pro: CSS viewport 412×915 @3.5× density (~495 PPI)
+# Screen – Pixel 10 Pro: CSS viewport 412×915 @3.5× density
 SCREEN_CSS_WIDTH    = 412
 SCREEN_CSS_HEIGHT   = 915
 SCREEN_PIXEL_RATIO  = 3.5
 
-# ── Chrome 149 (latest stable on Android) ────────────────────────────────────
+# ── Chrome 149 ────────────────────────────────────────────────────────────────
 CHROME_VERSION       = "149.0.7827.200"
 CHROME_MAJOR_VERSION = 149
 
-# ── User-Agent – Chrome UA Reduction (Chrome 110+) ───────────────────────────
-# Modern Chrome on Android NEVER reveals device model in the UA string.
-# The real device identity is sent via Sec-CH-UA-Model client hint.
-# Format: "Mozilla/5.0 (Linux; Android 10; K) ... Chrome/<version> Mobile Safari/537.36"
+# ── User-Agent ────────────────────────────────────────────────────────────────
 USER_AGENT_TEMPLATES = [
     (
         "Mozilla/5.0 (Linux; Android 10; K) "
@@ -62,10 +61,10 @@ GEMINI_OFFER_KEYWORDS = [
 ]
 
 # ── Selenium / WebDriver ──────────────────────────────────────────────────────
-WEBDRIVER_TIMEOUT  = 30   # seconds – explicit wait
-IMPLICIT_WAIT      = 10   # seconds
-PAGE_LOAD_TIMEOUT  = 60   # seconds
-HEADLESS           = True # always headless on Replit
+WEBDRIVER_TIMEOUT  = 30
+IMPLICIT_WAIT      = 10
+PAGE_LOAD_TIMEOUT  = 60
+HEADLESS           = True
 
 # ── Session storage ───────────────────────────────────────────────────────────
 SESSION_STORE: dict = {}
