@@ -1,0 +1,106 @@
+name: Fix Google One offer link
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-offer-link.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch offer-link extraction
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('google_automation.py')
+          text = path.read_text(encoding='utf-8')
+
+          start = text.index('def _extract_payment_link(')
+          end = text.index('\n\ndef _navigate_google_one(', start)
+
+          new_func = r'''def _extract_payment_link(driver: webdriver.Chrome) -> Optional[str]:
+    """Extract the real Google One redemption/activation URL.
+
+    Do not return generic /benefits pages. Prefer the actual offer endpoints
+    used for activation, such as /offer/... and /partner-eft-onboard/....
+    """
+    offer_pat = re.compile(
+        r"https?://(?:www\\.)?one\\.google\\.com/"
+        r"(?:offer(?:/[^\\s'\"<>\\)]*)?|partner-eft-onboard/[^\\s'\"<>\\)]*)",
+        re.IGNORECASE,
+    )
+
+    def clean(url: str) -> Optional[str]:
+        url = (url or '').strip()
+        if not url:
+            return None
+        url = url.rstrip('\\\\.,;')
+        if offer_pat.fullmatch(url):
+            return url
+        return None
+
+    # 1. Actual hrefs in anchors. This is the most reliable source.
+    for link in driver.find_elements(By.TAG_NAME, 'a'):
+        try:
+            href = clean(link.get_attribute('href') or '')
+            if href:
+                return href
+        except Exception:
+            continue
+
+    # 2. Google sometimes creates the activation URL in page text/HTML.
+    try:
+        html = driver.page_source or ''
+        matches = offer_pat.findall(html)
+        if matches:
+            return clean(matches[0])
+    except Exception:
+        pass
+
+    # 3. Inspect buttons and their nearby anchors/data attributes.
+    for el in driver.find_elements(By.CSS_SELECTOR, "button, [role='button'], [data-href], [href]"):
+        try:
+            candidates = [
+                el.get_attribute('href') or '',
+                el.get_attribute('data-href') or '',
+                el.get_attribute('data-url') or '',
+            ]
+            for candidate in candidates:
+                href = clean(candidate)
+                if href:
+                    return href
+
+            parent = el.find_element(By.XPATH, 'ancestor::a[1]')
+            href = clean(parent.get_attribute('href') or '')
+            if href:
+                return href
+        except Exception:
+            continue
+
+    # Never fall back to /benefits or the current page. Those are not the
+    # redeem links the bot is supposed to return.
+    return None
+'''
+
+          text = text[:start] + new_func + text[end:]
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit patched file
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add google_automation.py
+          git diff --cached --quiet && exit 0
+          git commit -m "fix: return actual Google One redemption URL"
+          git push
