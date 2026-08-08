@@ -1,5 +1,3 @@
-# Browser dependencies for Selenium on Railway/Nixpacks.
-# The Python provider remains enabled; these packages are added to the runtime.
-
 [phases.setup]
-aptPkgs = ["...", "chromium", "chromium-driver"]
+nixPkgs = ["...", "chromium", "chromedriver"]
+aptPkgs = ["...", "ca-certificates", "fonts-liberation", "fonts-noto-color-emoji", "libnss3", "libgbm1", "libxss1", "libasound2"]
