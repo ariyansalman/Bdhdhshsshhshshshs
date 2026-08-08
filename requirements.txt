@@ -1,0 +1,9 @@
+python-telegram-bot==21.3
+selenium==4.21.0
+webdriver-manager==4.0.1
+pyotp
+pyotp
+python-telegram-bot==21.3
+selenium==4.21.0
+telegram
+webdriver-manager==4.0.1
