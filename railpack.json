@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "python",
+  "deploy": {
+    "aptPackages": [
+      "chromium",
+      "chromium-driver",
+      "ca-certificates",
+      "fonts-liberation",
+      "fonts-noto-color-emoji",
+      "libnss3",
+      "libgbm1",
+      "libxss1",
+      "libasound2"
+    ],
+    "variables": {
+      "CHROME_BIN": "/usr/bin/chromium",
+      "CHROMEDRIVER_BIN": "/usr/bin/chromedriver"
+    }
+  }
+}
